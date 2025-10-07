@@ -65,3 +65,110 @@ public class MySQL_2 {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+package new1;
+
+import java.sql.Statement;
+import java.sql.*;
+import java.rmi.server.ExportException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+
+class yel{
+	String url="jdbc:mysql://localhost:3306/rss";
+	String name="root";
+	String pass="root";
+	
+	public Connection myconnect() throws Exception{
+		Connection conn=null;
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		conn=	DriverManager.getConnection(url,name,pass);
+			
+		}
+		catch (Exception e) {
+		System.out.println(e);
+		}
+		return conn;
+		
+	}
+
+}
+public class New {
+	public static void main(String[] args) throws Exception{
+		
+	
+	yel ob=new yel();
+	Connection conn=ob.myconnect();
+	Statement stmt=conn.createStatement();
+	
+	stmt.executeUpdate("drop table if exists emp");
+	String table="create table emp (empid int,name varchar(20),dep varchar(20))";
+	stmt.executeUpdate(table);
+	
+	String s="insert into emp values (123,'s','sdf'),(12,'sd','sd')";
+	stmt.executeUpdate(s);
+	
+	ResultSet rs =stmt.executeQuery("select*from emp");
+	
+	while(rs.next()) {
+		System.out.println(rs.getInt("empid")+rs.getString("name"));
+		
+		System.out.println(rs.getString("dep"));
+
+	}
+	rs=stmt.executeQuery("select empid from emp");
+	while(rs.next()) {
+		System.out.println(rs.getInt("empid"));
+	}
+	
+	
+	
+	
+	
+	
+	
+	}
+}
+
