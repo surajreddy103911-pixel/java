@@ -42,6 +42,25 @@ public class GraphTUF {
         return bfs;
     }
 
+    // DFS Traversal (recursive)
+    void dfsUtil(int node, boolean vis, List<Integer> dfsList) {
+        vis[node] = true;
+        dfsList.add(node);
+
+        for (Integer it : adj.get(node)) {
+            if (!vis[it]) {
+                dfsUtil(it, vis, dfsList);
+            }
+        }
+    }
+
+    List<Integer> dfsOfGraph(int start) {
+        List<Integer> dfsList = new ArrayList<>();
+        boolean vis[] = new boolean[V];
+        dfsUtil(start, vis, dfsList);
+        return dfsList;
+    }
+
     // Print adjacency list
     void printGraph() {
         for (int i = 0; i < V; i++) {
@@ -73,5 +92,9 @@ public class GraphTUF {
         // Perform BFS from node 0
         System.out.println("\nBFS Traversal starting from node 0:");
         System.out.println(g.bfsOfGraph(0));
+
+        // Perform DFS from node 0
+        System.out.println("\nDFS Traversal starting from node 0:");
+        System.out.println(g.dfsOfGraph(0));
     }
 }
