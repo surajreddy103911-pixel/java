@@ -19,30 +19,30 @@ public class GraphTUF {
         adj.get(v).add(u); // remove if directed graph
     }
 
-    // BFS Traversal
-    void BFS(int start) {
+    // ✅ BFS Traversal (returns list instead of printing)
+    List<Integer> bfsOfGraph(int start) {
+        List<Integer> bfs = new ArrayList<>();
         boolean[] vis = new boolean[V];
         Queue<Integer> q = new LinkedList<>();
 
         vis[start] = true;
         q.add(start);
 
-        System.out.print("BFS starting from " + start + ": ");
         while (!q.isEmpty()) {
             int node = q.poll();
-            System.out.print(node + " ");
+            bfs.add(node);
 
-            for (int it : adj.get(node)) {
+            for (Integer it : adj.get(node)) {
                 if (!vis[it]) {
                     vis[it] = true;
                     q.add(it);
                 }
             }
         }
-        System.out.println();
+        return bfs;
     }
 
-    // DFS Traversal
+    // DFS Traversal (same as before)
     void DFS(int start) {
         boolean[] vis = new boolean[V];
         System.out.print("DFS starting from " + start + ": ");
@@ -72,7 +72,10 @@ public class GraphTUF {
         g.addEdge(2, 5);
         g.addEdge(2, 6);
 
-        g.BFS(0);
+        // Perform BFS (now returns list)
+        System.out.println("BFS Traversal starting from node 0: " + g.bfsOfGraph(0));
+
+        // Perform DFS (prints directly)
         g.DFS(0);
     }
 }
