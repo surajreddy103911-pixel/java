@@ -1,79 +1,80 @@
 import java.util.*;
 
-// Class to store node and weight pair
+// ---------- Pair Class ----------
+// Used to store (distance, node)
 class Pair {
-    int node, weight;
-    Pair(int node, int weight) {
+    int dist;
+    int node;
+    Pair(int dist, int node) {
+        this.dist = dist;
         this.node = node;
-        this.weight = weight;
     }
 }
 
-public class DijkstraExample {
-    private int V; // number of vertices
-    private ArrayList<ArrayList<Pair>> adj; // adjacency list
+public class DijkstraArrayList {
 
-    // Constructor
-    DijkstraExample(int v) {
-        V = v;
-        adj = new ArrayList<>();
-        for (int i = 0; i < v; i++)
-            adj.add(new ArrayList<>());
-    }
+    // ---------- Dijkstra Function ----------
+    static void dijkstra(int n, ArrayList<ArrayList<Pair>> adj, int src) {
 
-    // Add weighted edge
-    void addEdge(int u, int v, int w) {
-        adj.get(u).add(new Pair(v, w)); // u → v
-        adj.get(v).add(new Pair(u, w)); // v → u (remove for directed)
-    }
+        // Distance and Parent Arrays
+        ArrayList<Integer> dist = new ArrayList<>(Collections.nCopies(n + 1, Integer.MAX_VALUE));
+        ArrayList<Integer> parent = new ArrayList<>(Collections.nCopies(n + 1, -1));
 
-    // Dijkstra's algorithm
-    void dijkstra(int src) {
-        int[] dist = new int[V]; // store shortest distances
-        Arrays.fill(dist, Integer.MAX_VALUE); // initialize as infinity
-        dist[src] = 0; // distance to source = 0
+        dist.set(src, 0);
+        parent.set(src, src); // source’s parent = itself
 
-        // PriorityQueue to always pick the node with smallest distance
-        PriorityQueue<Pair> pq = new PriorityQueue<>(Comparator.comparingInt(p -> p.weight));
-        pq.add(new Pair(src, 0));
+        // PriorityQueue (Min-Heap) based on distance
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a, b) -> a.dist - b.dist);
+        pq.add(new Pair(0, src));
 
+        // Dijkstra's Algorithm
         while (!pq.isEmpty()) {
-            Pair current = pq.poll(); // node with smallest distance
-            int node = current.node;
-            int currentDist = current.weight;
+            Pair curr = pq.poll();  // node with smallest distance
+            int node = curr.node;
+            int dis = curr.dist;
 
-            // Visit all neighbors
-            for (Pair neighbor : adj.get(node)) {
-                int nextNode = neighbor.node;
-                int edgeWeight = neighbor.weight;
+            // Traverse all adjacent nodes
+            for (Pair it : adj.get(node)) {
+                int adjNode = it.node;
+                int weight = it.dist;
 
-                // Relaxation: check if going through current node gives shorter path
-                if (currentDist + edgeWeight < dist[nextNode]) {
-                    dist[nextNode] = currentDist + edgeWeight;
-                    pq.add(new Pair(nextNode, dist[nextNode])); // add to PQ
+                // Relaxation step
+                if (dis + weight < dist.get(adjNode)) {
+                    dist.set(adjNode, dis + weight);
+                    parent.set(adjNode, node);
+                    pq.add(new Pair(dist.get(adjNode), adjNode));
                 }
             }
         }
 
-        // Print shortest distances from source
-        System.out.println("Shortest distances from node " + src + ":");
-        for (int i = 0; i < V; i++)
-            System.out.println("To " + i + " -> " + dist[i]);
+        // ---------- Print Results ----------
+        System.out.println("\nShortest distances from source " + src + ":");
+        for (int i = 1; i <= n; i++) {
+            System.out.println("Node " + i + " → Distance: " + dist.get(i));
+        }
+
+        System.out.println("\nShortest paths from source " + src + ":");
+        for (int i = 1; i <= n; i++) {
+            if (i == src) continue;
+            System.out.print("Path to " + i + ": ");
+            printPath(i, parent);
+            System.out.println();
+        }
     }
 
-    // Main method
+    // ---------- Helper Function to Print Path ----------
+    static void printPath(int node, ArrayList<Integer> parent) {
+        if (parent.get(node) == node) {
+            System.out.print(node + " ");
+            return;
+        }
+        printPath(parent.get(node), parent);
+        System.out.print(node + " ");
+    }
+
+    // ---------- Main Function ----------
     public static void main(String[] args) {
-        DijkstraExample g = new DijkstraExample(6);
+        int n = 6; // number of nodes
 
-        // Weighted edges (u, v, w)
-        g.addEdge(0, 1, 4);
-        g.addEdge(0, 2, 2);
-        g.addEdge(1, 2, 5);
-        g.addEdge(1, 3, 10);
-        g.addEdge(2, 4, 3);
-        g.addEdge(4, 3, 4);
-        g.addEdge(3, 5, 11);
-
-        g.dijkstra(0); // find shortest path from node 0
-    }
-}
+        // Create adjacency list
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
